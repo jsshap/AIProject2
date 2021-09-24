@@ -317,58 +317,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     def terminal(self, gameState, depth):
       #print depth
       return gameState.isWin() or gameState.isLose() or depth == self.depth
-    # def getAction2(self, gameState, agentIndex, depth, alpha, beta):
-
-    #   #print depth, self.depth
-
-    #   # print gameState
-
-    #   if gameState.isWin():
-    #     return (self.evaluationFunction(gameState),)
-    #   elif gameState.isLose():
-    #     return (self.evaluationFunction(gameState),)
-    #   elif depth == self.depth:
-    #     return (self.evaluationFunction(gameState),)
-
-
-
-    #   #print agentIndex, gameState.getNumAgents()
-
-      
-
-    #   if agentIndex == 0:
-    #     bs = -1000000
-    #     bm = None
-    #     for move in gameState.getLegalActions(agentIndex):
-    #       suc = gameState.generateSuccessor(agentIndex, move)
-    #       #print "Agent ", agentIndex, 1, gameState.getNumAgents()
-    #       score = self.getAction2(suc, 1 , depth)[0]
-    #       if score > bs:
-    #         bs = score
-    #         bm = move
-    #     return (bs, bm)
-    #   elif agentIndex < gameState.getNumAgents()-1:
-    #     bm = None
-    #     bs = 10000000
-    #     for move in gameState.getLegalActions(agentIndex):
-    #       suc = gameState.generateSuccessor(agentIndex, move )
-    #       #print "Agent ", agentIndex, agentIndex+1 ,gameState.getNumAgents()
-    #       score = self.getAction2(suc, agentIndex+1 , depth)[0]
-    #       if score < bs:
-    #         bs = score
-    #         bm = move
-    #     return (bs, bm)
-    #   elif agentIndex == gameState.getNumAgents() -1:
-    #     bs = 1000000
-    #     bm = None
-    #     for move in gameState.getLegalActions(agentIndex):
-    #       suc = gameState.generateSuccessor(agentIndex, move)
-    #       #print "Agent ", agentIndex, 0,gameState.getNumAgents()
-    #       score = self.getAction2(suc, 0 , depth +1)[0]
-    #       if score < bs:
-    #         bs = score
-    #         bm = move
-    #     return (bs, bm)
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -384,7 +332,58 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.getAction2(gameState,0, depth = 0)[1]
+
+    
+    def getAction2(self, gameState, agentIndex, depth):
+
+      #print depth, self.depth
+
+      # print gameState
+
+      if gameState.isWin():
+        return (self.evaluationFunction(gameState),)
+      elif gameState.isLose():
+        return (self.evaluationFunction(gameState),)
+      elif depth == self.depth:
+        return (self.evaluationFunction(gameState),)
+
+
+
+      #print agentIndex, gameState.getNumAgents()
+
+      
+
+      #FUTURE: just get all of the scores in the loops below and average them.
+      #pass a NOne for move if random
+
+
+      if agentIndex == 0:
+        bs = -1000000
+        bm = None
+        for move in gameState.getLegalActions(agentIndex):
+          suc = gameState.generateSuccessor(agentIndex, move)
+          #print "Agent ", agentIndex, 1, gameState.getNumAgents()
+          score = self.getAction2(suc, 1 , depth)[0]
+          if score > bs:
+            bs = score
+            bm = move
+        return (bs, bm)
+      elif agentIndex < gameState.getNumAgents()-1:
+        bm = None
+        bs = 10000000
+
+
+        avg = sum([self.getAction2(gameState.generateSuccessor(agentIndex, move ), agentIndex+1 , depth)[0] for move in gameState.getLegalActions(agentIndex)])/len(gameState.getLegalActions(agentIndex))
+        return (avg, None)
+      elif agentIndex == gameState.getNumAgents() -1:
+        bs = 1000000
+        bm = None
+        avg = sum([self.getAction2(gameState.generateSuccessor(agentIndex, move ), 0 , depth+1)[0] for move in gameState.getLegalActions(agentIndex)])/len(gameState.getLegalActions(agentIndex))
+        return (avg, None)
+
+
+    
 
 def betterEvaluationFunction(currentGameState):
     """
