@@ -257,7 +257,119 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        toRet = self.alphaBeta(gameState,0, depth = 0, alpha = -100000, beta = 100000)
+        #print toRet
+        return toRet
+
+
+    def alphaBeta (self, gameState, agentIndex = 0, depth = 0, alpha = -100000, beta = 100000):
+      return self.maxValue(gameState, agentIndex, depth, alpha, beta)[1]
+
+    def maxValue(self, gameState, agentIndex, depth, alpha, beta):
+      if self.terminal(gameState, depth):
+        return (self.evaluationFunction(gameState),)
+
+      bm = None
+      v = -10000000
+      for move in gameState.getLegalActions(agentIndex):
+          suc = gameState.generateSuccessor(agentIndex, move)
+
+          #ghost one always goes after pacman, so we hardcode one here
+          score = self.minValue(suc, 1 , depth, alpha, beta)[0]
+
+          v = max(v, score)
+          if v > beta:
+            return (v, move)
+          if (v > alpha):
+            alpha = v
+            bm = move
+
+
+      
+      return (v, bm)
+
+
+    def minValue(self, gameState, agentIndex, depth, alpha, beta):
+      if self.terminal(gameState, depth):
+        return (self.evaluationFunction(gameState),)
+
+      bm = None
+      v = 10000000
+      for move in gameState.getLegalActions(agentIndex):
+          suc = gameState.generateSuccessor(agentIndex, move)
+
+          #ghost one always goes after pacman, so we hardcode one here
+          if (agentIndex == gameState.getNumAgents()-1 ):
+            #back to pack man
+            score = self.maxValue(suc, 0 , depth+1, alpha, beta)[0]
+          elif (agentIndex < gameState.getNumAgents()-1 ):
+            score = self.minValue(suc, agentIndex + 1 ,depth, alpha, beta)[0]
+
+          v = min(v, score)
+          if v < alpha:
+            return (v, move)
+          if (v < beta):
+            beta = v
+            bm = move
+
+      return (v, bm)
+
+    def terminal(self, gameState, depth):
+      #print depth
+      return gameState.isWin() or gameState.isLose() or depth == self.depth
+    # def getAction2(self, gameState, agentIndex, depth, alpha, beta):
+
+    #   #print depth, self.depth
+
+    #   # print gameState
+
+    #   if gameState.isWin():
+    #     return (self.evaluationFunction(gameState),)
+    #   elif gameState.isLose():
+    #     return (self.evaluationFunction(gameState),)
+    #   elif depth == self.depth:
+    #     return (self.evaluationFunction(gameState),)
+
+
+
+    #   #print agentIndex, gameState.getNumAgents()
+
+      
+
+    #   if agentIndex == 0:
+    #     bs = -1000000
+    #     bm = None
+    #     for move in gameState.getLegalActions(agentIndex):
+    #       suc = gameState.generateSuccessor(agentIndex, move)
+    #       #print "Agent ", agentIndex, 1, gameState.getNumAgents()
+    #       score = self.getAction2(suc, 1 , depth)[0]
+    #       if score > bs:
+    #         bs = score
+    #         bm = move
+    #     return (bs, bm)
+    #   elif agentIndex < gameState.getNumAgents()-1:
+    #     bm = None
+    #     bs = 10000000
+    #     for move in gameState.getLegalActions(agentIndex):
+    #       suc = gameState.generateSuccessor(agentIndex, move )
+    #       #print "Agent ", agentIndex, agentIndex+1 ,gameState.getNumAgents()
+    #       score = self.getAction2(suc, agentIndex+1 , depth)[0]
+    #       if score < bs:
+    #         bs = score
+    #         bm = move
+    #     return (bs, bm)
+    #   elif agentIndex == gameState.getNumAgents() -1:
+    #     bs = 1000000
+    #     bm = None
+    #     for move in gameState.getLegalActions(agentIndex):
+    #       suc = gameState.generateSuccessor(agentIndex, move)
+    #       #print "Agent ", agentIndex, 0,gameState.getNumAgents()
+    #       score = self.getAction2(suc, 0 , depth +1)[0]
+    #       if score < bs:
+    #         bs = score
+    #         bm = move
+    #     return (bs, bm)
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
