@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+from pacman import GameState
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -393,7 +394,36 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    #newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+    "*** YOUR CODE HERE ***"
+
+    
+
+    
+
+    #minimize this
+    numFoods = len(newFood.asList())
+    distsToFoods = [util.manhattanDistance(f , newPos) for f in newFood.asList()]
+    
+    #maximize
+    distToGhosts = [util.manhattanDistance(ghost.getPosition(),newPos) for ghost in newGhostStates]
+    
+    tooClose = min(distToGhosts) <= 2
+
+    if numFoods == 0:
+      toRet = 100000000000
+    else:
+      #toRet = 1.0/(10000*min(distsToFoods))+ 100.0/(numFoods*100+1) + 10.0/(sum(distsToFoods)*10000+1) + tooClose *(-1000000000)#+ .00000001*sum(distToGhosts) 
+      toRet = 100000000.0/(numFoods+1) + 100000000.0/(sum(distsToFoods)+1) + sum(distToGhosts)+ tooClose *(-10000000)
+    #print toRet
+    #print toRet
+    #100000/(numFoods+1) + 10000/(sum(distsToFoods)+1) + sum(distToGhosts)+moved*10000 + tooClose *(-10000000)
+    return toRet
 
 # Abbreviation
 better = betterEvaluationFunction
