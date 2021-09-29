@@ -298,7 +298,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
      
 
       if gameState.isWin():
-        return (self.evaluationFunction(gameState),)
+        return (self.evaluationFunction(gameState)+1,)
       elif gameState.isLose():
         return (self.evaluationFunction(gameState),)
       elif depth == self.depth:
@@ -319,6 +319,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         for move in gameState.getLegalActions(agentIndex):
           suc = gameState.generateSuccessor(agentIndex, move)
           score = self.getAction2(suc, 1 , depth)[0]
+          #print len(gameState.getFood().asList())
+          if "Stop" in move:
+            score -= 20
           if score > bs:
             bs = score
             bm = move
@@ -378,7 +381,7 @@ def betterEvaluationFunction(currentGameState):
     elif sum(newScaredTimes) != 0 and (sum(newScaredTimes)/len(newScaredTimes)+1) > (sum(distToGhosts)/len(distToGhosts)+1)/2:
       toRet = 100000000.0/(numFoods+1) + 100000000.0/(sum(distsToFoods)+1) + 10000000.0/(nearestGhost+1)
     else:
-      toRet = 100000000.0/(numFoods+1) + 100000000.0/(sum(distsToFoods)+1) + sum(distToGhosts)+ tooClose *(-10000000) + 100000.0/(sum(distToCapsules)+1)
+      toRet = 100000000.0/(numFoods+1) + 100000000.0/(sum(distsToFoods)+1) + sum(distToGhosts)+ tooClose *(-1000000000) + 100000.0/(sum(distToCapsules)+1)
     return toRet
 
 # Abbreviation
